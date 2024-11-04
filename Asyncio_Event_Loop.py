@@ -1,5 +1,7 @@
 import asyncio
 loop = asyncio.get_event_loop()
+loop.set_debug(True)
+
 # the loop is just gonna run forever 
 # loop.run_forever()
 
@@ -32,6 +34,16 @@ def trampoline(name : str = ""):
 loop.call_soon(trampoline,"first")
 loop.call_soon(trampoline,"second")
 loop.call_soon(trampoline,"third")
-loop.call_later(8,loop.stop)
-loop.run_forever()
+#  to demonstrate that they are not running at true parallelism we schudule heavy  cpu_bound function to run 
 
+def hog():
+    sum = 0
+    print("the hog is running")
+    for i in range(10_000):
+        for j in range(10_000):
+            sum += j
+    print("the hog is finished")
+    return sum
+loop.call_later(15,hog)
+loop.call_later(25,loop.stop)
+loop.run_forever()
